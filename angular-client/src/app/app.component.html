@@ -8,4 +8,16 @@
 <button md-icon-button [mdMenuTriggerFor]="appMenu">
  <md-icon>account_box</md-icon>
 </button>
+
+
+<button md-button (click)="github()" aria-label="Show Github Link">
+  Github
+</button>
+
+<button md-button (click)="ddoc()" aria-label="Show DDoc Link">
+  Design
+</button>
+
+
 <router-outlet></router-outlet>
+
