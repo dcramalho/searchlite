@@ -11,12 +11,23 @@ import {MdMenuModule} from '@angular/material';
 import { RouterModule, Routes }   from '@angular/router';
 import { AccountInfoComponent } from './account-info/account-info.component';
 import { HomeComponent } from './home/home.component';
+import {MdSnackBarModule} from '@angular/material';
+import { SnackbarComponent } from './snackbar/snackbar.component';
+import {MdTabsModule} from '@angular/material';
+import {MdSlideToggleModule} from '@angular/material';
+import {MdSliderModule} from '@angular/material';
+import {MdCheckboxModule} from '@angular/material';
+import {MdSidenavModule} from '@angular/material';
+import {MdProgressSpinnerModule} from '@angular/material';
+import {MdProgressBarModule} from '@angular/material';
+import {MdRadioModule} from '@angular/material';
 
 @NgModule({
   declarations: [
     AppComponent,
     AccountInfoComponent,
-    HomeComponent
+    HomeComponent,
+    SnackbarComponent
   ],
   imports: [
     BrowserModule,
@@ -33,6 +44,15 @@ import { HomeComponent } from './home/home.component';
     MdListModule,
     MdChipsModule,
     MdMenuModule,
+    MdSnackBarModule,
+    MdTabsModule,
+    MdSlideToggleModule,
+    MdSliderModule,
+    MdCheckboxModule,
+    MdSidenavModule,
+    MdProgressSpinnerModule,
+    MdProgressBarModule,
+    MdRadioModule,
     RouterModule.forRoot([
       {
         path: 'account',

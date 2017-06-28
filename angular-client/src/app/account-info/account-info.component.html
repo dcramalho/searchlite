@@ -1,3 +1,30 @@
-<p>
-  account-info works!
-</p>
+<h1>
+  Welcome Back Lauren Clayton!
+</h1>
+
+
+ <div class="app-content">
+
+    <md-card>
+      <button md-button>FEATURE0</button>
+      <button md-raised-button md-tooltip="This is a tooltip!">FEATURE1</button>
+      <button md-raised-button color="primary">FEATURE2</button>
+      <button md-raised-button color="accent">FEATURE3</button>
+    </md-card>
+
+    <md-card>
+      <md-checkbox>Unchecked</md-checkbox>
+      <md-checkbox [checked]="true">Checked</md-checkbox>
+      <md-checkbox [indeterminate]="true">Indeterminate</md-checkbox>
+      <md-checkbox [disabled]="true">Disabled</md-checkbox>
+    </md-card>
+
+    <br>
+    
+
+    <button md-raised-button (click)="paginateup()">
+             LOGOUT
+    </button>
+
+ 
+  </div>
