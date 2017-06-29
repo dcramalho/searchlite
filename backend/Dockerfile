@@ -13,6 +13,8 @@ RUN ["mvn", "verify"]
 
 # Adding source, compile and package into a fat jar
 ADD src /code/src
+ADD data /code/data
+ADD output /code/output
 RUN ["mvn", "package"]
 
 EXPOSE 8080
