@@ -119,17 +119,7 @@ public class Query {
 			else postingLists.add(readPosting(indexChannel, termId));
 		    }
 
-		    List<Integer> result = postingLists.get(0).getList();
-		    for(PostingList pl : postingLists){
-		    	List<Integer> p1 = pl.getList();
-		    	result = intersection(p1, result);
-		    }
-		    List<String> result_list = new ArrayList<String>();
-		    for(Integer docId : result) {
-		    	result_list.add(docDict.get(docId));
-		    	//System.out.print(docDict.get(docId));
-		
-		    }
+		    
 		    /*
 		     * TODO: Your code here
 		     *       Perform query processing with the inverted index.
@@ -137,8 +127,19 @@ public class Query {
 		     *       containing the query terms, one document file on each
 		     *       line, sorted in lexicographical order.
 		     */
+		    List<Integer> result = postingLists.get(0).getList();
+		    for(PostingList pl : postingLists){
+		    	List<Integer> p1 = pl.getList();
+		    	result = intersection(p1, result);
+		    }
+		    List<String> fileResults  = new ArrayList<String>();
+		    for(Integer docId : result) {
+				fileResults.add(docDict.get(docId));
+		    }
+		    /*********/
+
 		indexFile.close();
-		return result_list;
+		return fileResults;
 
 		} catch (Exception e) { System.out.println("ERROR " + e); }
 
