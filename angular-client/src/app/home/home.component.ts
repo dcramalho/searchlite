@@ -7,83 +7,159 @@ import {MdSnackBar} from '@angular/material'
   templateUrl: './home.component.html',
   styleUrls: ['./home.component.css']
 })
-export class HomeComponent {
- term: string;
-  type: string;
-  counter = 0;
-  results: string[];
-  types = [
-    {'value': 'pdf', 'name': 'PDF'},
-    {'value': 'html', 'name': 'HTML'},
-    {'value': 'xml', 'name': 'XML'},
-    {'value': 'doc', 'name': 'DOC'},
-    {'value': 'all', 'name': 'ALL'}
-  ];
+export class HomeComponent 
+{
+    term: string;
+    search_counter = 0;
+    i1 = 0;
+    i2 = 0;
+    type: string;
+    results: Array<string> = new Array<string>();
+    subresults: Array<string> = new Array<string>();
+    iterate_sub = 0;
+    results_length = 0;
+    search_controller = false;
+    result: string;
+    temp: string;
+    save_term: string;
+    types = [
+      {'value': 'pdf', 'name': 'PDF'},
+      {'value': 'html', 'name': 'HTML'},
+      {'value': 'xml', 'name': 'XML'},
+      {'value': 'doc', 'name': 'DOC'},
+      {'value': 'all', 'name': 'ALL'}
+    ];
+  
 
-  constructor(private searchService: SearchService, public snackBar: MdSnackBar) {}
+  constructor(private searchService: SearchService, public snackBar: MdSnackBar) 
+  {
+
+  }
 
   message: string = 'REDL is Searching...';
 
-  search() {
-
-    this.snackBar.open(this.message, this.term, {
-  duration: 3000
-});
+  search()
+  {
+    
+        this.snackBar.open(this.message, this.term, {duration: 3000});
+       /**GOT RESULT*/
   
-    if(this.term === 'sundar') {
-      this.paginateup();
+        this.searchService.search(this.term).subscribe(data => {this.result = JSON.stringify(data); });
+  
+        this.helpSearch();
 
-    } else if(this.term === 'bonita') {
-      this.results = this.filterType(['see.stanford.edu_materials_icspmcs106a_25-strings.pdf', 'spectrumchildhealth.stanford.edu_documents_MentoringAgreement1_111811.doc', 'scien.stanford.edu_pages_labsite_2003_psych221_projects_03_jgin_appendix.html' , 'smi-protege.stanford.edu_repos_protege_string-search-tab_tags_release-3.1_build-internal.xml']);
-    } else if(this.term === 'gozie') {
-      this.results = this.filterType(['snf.stanford.edu_Education_ETPs_photolithography%2520activity.doc','see.stanford.edu_materials_icspmcs106a_29-practice-midterm-solutions.pdf', 'scien.stanford.edu_pages_labsite_2002_psych221_projects_02_william.yu_page3.html' , 'raolab.stanford.edu_xml_homepage.xml']);
-    } else {
-      this.results = undefined;
+        this.helpSearch();
+      
+  
+   }
+ 
+  helpSearch()
+  {
+    if (this.search_controller == true)   /**EXPERIMENTING WITH SEARCH CONTROLLING SINCE NEED TO CLICK SEARCH TWICE -- RESETTING EVERYTHING*/
+    {
+        this.subresults = null;
+        this.results = null;
+        this.results_length = 0;
+        this.iterate_sub = 0;
+        this.i1 = 0;
+        this.i2 = 0;
+        this.temp = "";
+        this.result= "";
+        this.search_controller = false;
     }
-  }
+    else
+    {
+      //this.search_controller = true;
+     
+      /**REMOVING BRACKETS*/
+
+      this.i2 = 1;
+      this.i2 = this.result.lastIndexOf(']');
+      this.result = this.result.substring(this.i1+1,this.i2);
+
+    
+      /**POPULATING VECTOR RESULTS*/   
+      while(true)
+      {
+        /**REMOVING LEADING QUOTATIONS*/
+        this.result = this.result.substring(1, this.result.length);
+        /**GET RESULTS INTO TEMP THEN PUSH (get rid of num/ ?) ITERATE LENGTH */
+        this.temp = this.result.substring(0, this.result.indexOf('"'));
+        this.results.push(this.temp);
+        this.results_length = this.results_length + 1;
+        /**LOOP CONTROL CONDITION
+        LOOKING FOR COMMA TO ITERATE RESULT*/
+        if (this.result.search(',') != -1)
+        {
+          this.result = this.result.substring(this.result.indexOf(',') + 1, this.result.length);
+          continue;
+        }
+        break;
+      }
+     
+      /**BUILDING SUBRESULTS IN 5s -- CAN CHANGE TO ANY NUMBER REALLY (ADVANCED SEARCH?)*/
+
+      /**CHECK STARTING LENGTH OF  RESULTS ARRAY*/
+
+      if (this.results_length > 4)
+      {
+        this.subresults[0] = this.results[this.iterate_sub];
+        this.subresults[1] = this.results[this.iterate_sub + 1]; 
+        this.subresults[2] = this.results[this.iterate_sub + 2]; 
+        this.subresults[3] = this.results[this.iterate_sub + 3]; 
+        this.subresults[4] = this.results[this.iterate_sub + 4]
+      }
+      else
+      {
+        this.subresults = this.results;
+      }
+    }
+}
+
+/** NEED A WAY TO GET CLICKABLE LINKS -- LINK TO READ LOCAL FILES?*/
+
+
+/** PROTOTYPES OF PAGINATION FUNCITONS*/
 
   paginateup():void
   {
-     if (this.counter == 0)
-     {
-        this.counter = 1;
-        this.results = ['stanfordwest.stanford.edu_maintenance.pdf', 'scien.stanford.edu_pages_labsite_2002_psych221_projects_02_raytseng_future.html', 'scpd.stanford.edu_map_info.xml', 'spectrumchildhealth.stanford.edu_documents_GroupMeetingDocumentationForm_111811.doc'];
-     }
-     else if (this.counter == 1)
-     {
-        this.counter = 2;
-        this.results = ['howard_stanfordwest.stanford.edu_maintenance.doc', 'howard_scien.stanford.edu_pages_labsite_2002_psych221_projects_02_raytseng_future.doc', 'howard_scpd.stanford.edu_map_info.xml', 'howard_spectrumchildhealth.stanford.edu_documents_GroupMeetingDocumentationForm_111811.doc'];
-     }
-     else if (this.counter == 2)
-     {
-        this.counter = 0;
-        this.results = ['test_stanfordwest.stanford.edu_maintenance.pdf', 'test_scien.stanford.edu_pages_labsite_2002_psych221_projects_02_raytseng_future.doc', 'howard_scpd.stanford.edu_map_info.pdf', 'test_spectrumchildhealth.stanford.edu_documents_GroupMeetingDocumentationForm_111811.doc'];
 
+    if (this.iterate_sub + 4 > this.results_length)
+    {
+        /**ADD CODE TO POP ERROR MESSAGE*/
+    }
+    else 
+    {
 
-     }
+      /**NEED TO TEST CASE FOR GOING OUT OF BOUNDS*/
 
+      this.iterate_sub = this.iterate_sub+4;
+      this.subresults[0] = this.results[this.iterate_sub];
+      this.subresults[1] = this.results[this.iterate_sub + 1]; 
+      this.subresults[2] = this.results[this.iterate_sub + 2]; 
+      this.subresults[3] = this.results[this.iterate_sub + 3]; 
+      this.subresults[4] = this.results[this.iterate_sub + 4] 
+    }
+      
   }
 
   paginatedown():void
   {
-     if (this.counter == 0)
-     {
-        this.counter = 2;
-        this.results = ['test_stanfordwest.stanford.edu_maintenance.pdf', 'test_scien.stanford.edu_pages_labsite_2002_psych221_projects_02_raytseng_future.doc', 'howard_scpd.stanford.edu_map_info.pdf', 'test_spectrumchildhealth.stanford.edu_documents_GroupMeetingDocumentationForm_111811.doc'];
-  
-     }
-     else if (this.counter == 1)
-     {
-        this.counter = 0;
-        this.results = ['howard_stanfordwest.stanford.edu_maintenance.doc', 'howard_scien.stanford.edu_pages_labsite_2002_psych221_projects_02_raytseng_future.doc', 'howard_scpd.stanford.edu_map_info.xml', 'howard_spectrumchildhealth.stanford.edu_documents_GroupMeetingDocumentationForm_111811.doc'];
-     }
-     else if (this.counter == 2)
-     {
-        this.counter = 1;
-              this.results = ['stanfordwest.stanford.edu_maintenance.pdf', 'scien.stanford.edu_pages_labsite_2002_psych221_projects_02_raytseng_future.html', 'scpd.stanford.edu_map_info.xml', 'spectrumchildhealth.stanford.edu_documents_GroupMeetingDocumentationForm_111811.doc'];
-     }
-
+      if (this.iterate_sub - 4 < 0)
+      {
+        /**ADD CODE TO POP ERROR MESSAGE*/
+      }
+      else
+      {
+        this.iterate_sub = this.iterate_sub-4;
+        this.subresults[0] = this.results[this.iterate_sub];
+        this.subresults[1] = this.results[this.iterate_sub + 1]; 
+        this.subresults[2] = this.results[this.iterate_sub + 2]; 
+        this.subresults[3] = this.results[this.iterate_sub + 3]; 
+        this.subresults[4] = this.results[this.iterate_sub + 4]
+      }
   }
+
 
 
   filterType(unfilteredResults: string[]): string[] {
