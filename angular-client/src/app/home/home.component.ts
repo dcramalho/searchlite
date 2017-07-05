@@ -11,7 +11,7 @@ export class HomeComponent
 {
     hidden = false;
     show = true;
-    term: string;
+    term: string = "";
     search_counter = 0;
     i1 = 0;
     i2 = 0;
@@ -23,7 +23,8 @@ export class HomeComponent
     search_controller = false;
     result: string;
     temp: string;
-    save_term: string;
+    save_term: string = "";
+    st2: string = "";
     types = [
       {'value': 'all', 'name': 'ALL'},
       {'value': 'pdf', 'name': 'PDF'},
@@ -44,6 +45,13 @@ export class HomeComponent
 
   search()
   {
+      if ( (this.term == "") || (this.term == this.save_term))
+      {
+          this.nullSearch();
+          this.save_term = "";
+          return;
+      }
+
        if (!this.hidden){
        this.hidden =!this.hidden;}
 
@@ -51,33 +59,19 @@ export class HomeComponent
        /**GOT RESULT*/
   
         this.searchService.search(this.term).subscribe(data => {this.result = JSON.stringify(data); });
-  
+       
         this.helpSearch();
-      
+        this.save_term = this.term;
+        this.helpSearch();
+
 
   
    }
  
   helpSearch()
-  {
-    if (this.search_controller == true)   /**EXPERIMENTING WITH SEARCH CONTROLLING SINCE NEED TO CLICK SEARCH TWICE -- RESETTING EVERYTHING*/
-    {
-        this.subresults = null;
-        this.results = null;
-        this.results_length = 0;
-        this.iterate_sub = 0;
-        this.i1 = 0;
-        this.i2 = 0;
-        this.temp = "";
-        this.result= "";
-        this.search_controller = false;
-    }
-    else
-    {
-      //this.search_controller = true;
-     
+  {     
       /**REMOVING BRACKETS*/
-
+  
       this.i2 = 1;
       this.i2 = this.result.lastIndexOf(']');
       this.result = this.result.substring(this.i1+1,this.i2);
@@ -126,7 +120,6 @@ export class HomeComponent
       {
         this.subresults = this.results;
       }
-    }
 }
 
 /** NEED A WAY TO GET CLICKABLE LINKS -- LINK TO READ LOCAL FILES?*/
@@ -135,8 +128,7 @@ export class HomeComponent
 /** PROTOTYPES OF PAGINATION FUNCITONS*/
 
   paginateup():void
-  {
-
+  { 
     if (this.iterate_sub + 4 > this.results_length)
     {
         /**ADD CODE TO POP ERROR MESSAGE*/
@@ -178,19 +170,14 @@ export class HomeComponent
 /**BUSTED*/
   nullSearch()
   {
-        if (this.search_controller == true)
-        {
-            this.search();
-        }
-        this.subresults = [""];
-        this.results = [""];
+        this.subresults = [];
+        this.results = [];
         this.results_length = 0;
         this.iterate_sub = 0;
         this.i1 = 0;
         this.i2 = 0;
         this.temp = "";
         this.result= "";
-        this.search_controller = true;
   }
 
 
