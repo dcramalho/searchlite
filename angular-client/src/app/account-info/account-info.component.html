@@ -26,5 +26,9 @@
              LOGOUT
     </button>
 
- 
+ <md-select placeholder="File Type" [(ngModel)]="type" name="type">
+                   <md-option *ngFor="let type of types" [value]="type.value">
+                      {{ type.name }}
+                  </md-option>
+              </md-select>
   </div>

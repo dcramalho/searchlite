@@ -25,13 +25,15 @@ export class HomeComponent
     temp: string;
     save_term: string;
     types = [
+      {'value': 'all', 'name': 'ALL'},
       {'value': 'pdf', 'name': 'PDF'},
       {'value': 'html', 'name': 'HTML'},
       {'value': 'xml', 'name': 'XML'},
       {'value': 'doc', 'name': 'DOC'},
-      {'value': 'all', 'name': 'ALL'}
-    ];
-  
+      {'value': 'xls', 'name': 'XLS'},
+      {'value': 'ppt', 'name': 'PPT'},
+];
+
 
   constructor(private searchService: SearchService, public snackBar: MdSnackBar) 
   {
@@ -51,9 +53,8 @@ export class HomeComponent
         this.searchService.search(this.term).subscribe(data => {this.result = JSON.stringify(data); });
   
         this.helpSearch();
-
-        this.helpSearch();
       
+
   
    }
  
@@ -104,6 +105,14 @@ export class HomeComponent
       /**BUILDING SUBRESULTS IN 5s -- CAN CHANGE TO ANY NUMBER REALLY (ADVANCED SEARCH?)*/
 
       /**CHECK STARTING LENGTH OF  RESULTS ARRAY*/
+      
+
+
+
+      this.results = this.filterType(this.results);
+
+
+
 
       if (this.results_length > 4)
       {
@@ -162,6 +171,26 @@ export class HomeComponent
         this.subresults[3] = this.results[this.iterate_sub + 3]; 
         this.subresults[4] = this.results[this.iterate_sub + 4]
       }
+  }
+
+
+
+/**BUSTED*/
+  nullSearch()
+  {
+        if (this.search_controller == true)
+        {
+            this.search();
+        }
+        this.subresults = [""];
+        this.results = [""];
+        this.results_length = 0;
+        this.iterate_sub = 0;
+        this.i1 = 0;
+        this.i2 = 0;
+        this.temp = "";
+        this.result= "";
+        this.search_controller = true;
   }
 
 
