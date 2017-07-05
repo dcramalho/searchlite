@@ -9,6 +9,8 @@ import {MdSnackBar} from '@angular/material'
 })
 export class HomeComponent 
 {
+    hidden = false;
+    show = true;
     term: string;
     search_counter = 0;
     i1 = 0;
@@ -40,7 +42,9 @@ export class HomeComponent
 
   search()
   {
-    
+       if (!this.hidden){
+       this.hidden =!this.hidden;}
+
         this.snackBar.open(this.message, this.term, {duration: 3000});
        /**GOT RESULT*/
   

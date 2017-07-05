@@ -3,24 +3,17 @@
       <md-tab label="REDL Search">
 
 
-]
+
 
 
 
        <div fxLayout="column" fxLayoutAlign="center center">
           <div><header>REDL</header></div>
 
-
-
-
-
-
           <div>
              <div fxLayout="row" fxLayoutAlign="center center" fxLayoutGap="15px">
-
-
                 <div fxFlexFill>
-                   <md-input-container class="searchbx">
+                   <md-input-container s>
                      <input mdInput
                      [(ngModel)]="term"
                      name="term"
@@ -29,32 +22,25 @@
                      required>
                  </md-input-container>
              </div>
-
-
-
-
-               <md-select placeholder="File Type" [(ngModel)]="type" name="type">
+             <div>
+                <md-select placeholder="File Type" [(ngModel)]="type" name="type">
                    <md-option *ngFor="let type of types" [value]="type.value">
                       {{ type.name }}
                   </md-option>
               </md-select>
-
-
-
       </div>
-  </div>
+      <div>
+        <link href="https://fonts.googleapis.com/icon?family=Material+Icons"
+        rel="stylesheet">
 
-
-
-
-
-
-  <div>
      <button md-raised-button (click)="search()">
-       Search
-   </button>
+      <i class="material-icons">&#xE8B6;</i>
+      
+     </button>
 </div>
-<div><h2>RESULTS</h2></div>
+</div>
+</div>
+<div *ngIf = "hidden"><h2>RESULTS</h2></div>
 
 
 
@@ -62,21 +48,13 @@
 <div>
 
 
-<div fxLayout="row" fxLayoutAlign="space-between center" >
-    <div>
-        <button md-raised-button (click)="paginatedown()">
-             Prev
-        </button>
-    </div>
-    <div>
-        <button md-raised-button (click)="paginateup()">
-             Next
-        </button>
-    </div>
-</div>
+<div *ngIf = "hidden" fxLayout="row" fxLayoutAlign="space-between center" >
+
 
     <span *ngIf="!results">No Results</span>
     <md-list>
+    <button class ="look"  (click)="paginatedown()" md-raised-button><i class="material-icons">&#xE316;</i></button> 
+
         <md-list-item *ngFor="let result of subresults"> 
           <md-chip-list>
             <md-chip *ngIf="getFileType(result) === 'html'" color="primary" selected="true">HTML</md-chip>
@@ -86,9 +64,13 @@
         </md-chip-list>
         {{result}} 
     </md-list-item>
+
+<button class="look" md-raised-button (click)="paginateup()" > <i class="material-icons">&#xE313;</i> </button>
+
 </md-list>
 </div>
 
+</div>
 </div>
 </md-tab>
 <md-tab label="REDL Advanced Search">
