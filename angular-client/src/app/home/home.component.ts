@@ -1,30 +1,34 @@
+
+
 import { Component } from '@angular/core';
 import { SearchService } from '../search.service';
-import {MdSnackBar} from '@angular/material'
 
 @Component({
   selector: 'app-home',
   templateUrl: './home.component.html',
   styleUrls: ['./home.component.css']
 })
+
 export class HomeComponent 
 {
     hidden = false;
-    show = true;
+    first_index = 2;
+    second_index = 0;
+    temp: string = "";
+    paginate_index = 0;
     term: string = "";
-    search_counter = 0;
-    i1 = 0;
-    i2 = 0;
-    type: string;
-    results: Array<string> = new Array<string>();
-    subresults: Array<string> = new Array<string>();
-    iterate_sub = 0;
-    results_length = 0;
-    search_controller = false;
-    result: string;
-    temp: string;
-    save_term: string = "";
-    st2: string = "";
+    filetype: string;
+
+    /** String holding the initial undeited result string from the backend */
+    result: string = "";
+
+    /** Declare an array of strings to hold individual results */
+    results_strings: Array<string> = new Array<string>();
+
+    /** Makes a smaller subarray of the results_strings to allow pagination */
+    sub_results_strings: Array<string> = new Array<string>();
+
+
     types = [
       {'value': 'all', 'name': 'ALL'},
       {'value': 'pdf', 'name': 'PDF'},
@@ -32,187 +36,144 @@ export class HomeComponent
       {'value': 'xml', 'name': 'XML'},
       {'value': 'doc', 'name': 'DOC'},
       {'value': 'xls', 'name': 'XLS'},
+      {'value': 'php', 'name': 'PHP'},
+
       {'value': 'ppt', 'name': 'PPT'},
 ];
+  
 
-
-  constructor(private searchService: SearchService, public snackBar: MdSnackBar) 
+  constructor(private searchService: SearchService) 
   {
 
   }
 
-  message: string = 'REDL is Searching...';
-
+  /** Reveals the hidden results box */
+  reveal()
+  {
+      if (!this.hidden){
+       this.hidden =!this.hidden;
+      }
+  }
+ 
+  /** Gets the backend data based on term provided in this.term */
   search()
   {
-      if ( (this.term == "") || (this.term == this.save_term))
-      {
-          this.nullSearch();
-          this.save_term = "";
-          return;
-      }
-
-       if (!this.hidden){
-       this.hidden =!this.hidden;}
-
-        this.snackBar.open(this.message, this.term, {duration: 3000});
-       /**GOT RESULT*/
-  
-        this.searchService.search(this.term).subscribe(data => {this.result = JSON.stringify(data); });
+        this.reveal();
+        this.searchService.search(this.term).subscribe(data => {
+          this.result = JSON.stringify(data); 
+          this.prepareResults(); 
+        });
        
-        this.helpSearch();
-        this.save_term = this.term;
-        this.helpSearch();
-
-
-  
-   }
+  }
  
-  helpSearch()
-  {     
-      /**REMOVING BRACKETS*/
-  
-      this.i2 = 1;
-      this.i2 = this.result.lastIndexOf(']');
-      this.result = this.result.substring(this.i1+1,this.i2);
-
-    
-      /**POPULATING VECTOR RESULTS*/   
-      while(true)
-      {
-        /**REMOVING LEADING QUOTATIONS*/
-        this.result = this.result.substring(1, this.result.length);
-        /**GET RESULTS INTO TEMP THEN PUSH (get rid of num/ ?) ITERATE LENGTH */
-        this.temp = this.result.substring(0, this.result.indexOf('"'));
-        this.results.push(this.temp);
-        this.results_length = this.results_length + 1;
-        /**LOOP CONTROL CONDITION
-        LOOKING FOR COMMA TO ITERATE RESULT*/
-        if (this.result.search(',') != -1)
-        {
-          this.result = this.result.substring(this.result.indexOf(',') + 1, this.result.length);
-          continue;
-        }
-        break;
-      }
-     
-      /**BUILDING SUBRESULTS IN 5s -- CAN CHANGE TO ANY NUMBER REALLY (ADVANCED SEARCH?)*/
-
-      /**CHECK STARTING LENGTH OF  RESULTS ARRAY*/
-      
-
-
-
-      this.results = this.filterType(this.results);
-
-
-
-
-      if (this.results_length > 4)
-      {
-        this.subresults[0] = this.results[this.iterate_sub];
-        this.subresults[1] = this.results[this.iterate_sub + 1]; 
-        this.subresults[2] = this.results[this.iterate_sub + 2]; 
-        this.subresults[3] = this.results[this.iterate_sub + 3]; 
-        this.subresults[4] = this.results[this.iterate_sub + 4]
-      }
-      else
-      {
-        this.subresults = this.results;
-      }
-}
-
-/** NEED A WAY TO GET CLICKABLE LINKS -- LINK TO READ LOCAL FILES?*/
-
-
-/** PROTOTYPES OF PAGINATION FUNCITONS*/
-
-  paginateup():void
-  { 
-    if (this.iterate_sub + 4 > this.results_length)
-    {
-        /**ADD CODE TO POP ERROR MESSAGE*/
-    }
-    else 
-    {
-
-      /**NEED TO TEST CASE FOR GOING OUT OF BOUNDS*/
-
-      this.iterate_sub = this.iterate_sub+4;
-      this.subresults[0] = this.results[this.iterate_sub];
-      this.subresults[1] = this.results[this.iterate_sub + 1]; 
-      this.subresults[2] = this.results[this.iterate_sub + 2]; 
-      this.subresults[3] = this.results[this.iterate_sub + 3]; 
-      this.subresults[4] = this.results[this.iterate_sub + 4] 
-    }
-      
-  }
-
-  paginatedown():void
+  /** Prepares the results for display */
+  prepareResults()
   {
-      if (this.iterate_sub - 4 < 0)
-      {
-        /**ADD CODE TO POP ERROR MESSAGE*/
-      }
-      else
-      {
-        this.iterate_sub = this.iterate_sub-4;
-        this.subresults[0] = this.results[this.iterate_sub];
-        this.subresults[1] = this.results[this.iterate_sub + 1]; 
-        this.subresults[2] = this.results[this.iterate_sub + 2]; 
-        this.subresults[3] = this.results[this.iterate_sub + 3]; 
-        this.subresults[4] = this.results[this.iterate_sub + 4]
-      }
+      /** Find the location of the last square bracker, i.e. end of result */
+      this.second_index = this.result.lastIndexOf(']');
+
+      /** Create substring from after the first square bracket to before the last square bracket. */
+      this.result = this.result.substring(this.first_index,this.second_index); 
+
+      /** Remove last quotation from results string */
+      this.result = this.result.substring(0, this.result.lastIndexOf('\"'));
+
+      /** Replace all instances of "," with empty spaces. */
+      this.result = this.result.replace(/\",\"/g, " ");    
+
+      /** Remove ?/ from strings**/
+      /**this.result = */
+
+      /** Split strings into array based on the whitespace */
+      this.results_strings = this.result.split(" "); 
+
+     this.results_strings = this.filterType(this.results_strings);
+
+
+      this.generateSubresults();  
   }
 
-
-
-/**BUSTED*/
-  nullSearch()
+  /** Generates the subresults to be displayed based on the paginate index. paginate_index +=5 for more and -=5 for less */
+  generateSubresults()
   {
-        this.subresults = [];
-        this.results = [];
-        this.results_length = 0;
-        this.iterate_sub = 0;
-        this.i1 = 0;
-        this.i2 = 0;
-        this.temp = "";
-        this.result= "";
+      this.sub_results_strings[0] = this.results_strings[0];
+      this.sub_results_strings[1] = this.results_strings[1];
+      this.sub_results_strings[2] = this.results_strings[2];
+      this.sub_results_strings[3] = this.results_strings[3];
+      this.sub_results_strings[4] = this.results_strings[4];
+  }
+
+  /** Hop forward five results and generate them */
+  paginateup()
+  {
+    this.paginate_index+=5;
+      this.sub_results_strings[0] = this.results_strings[this.paginate_index];
+      this.sub_results_strings[1] = this.results_strings[this.paginate_index+1];
+      this.sub_results_strings[2] = this.results_strings[this.paginate_index+2];
+      this.sub_results_strings[3] = this.results_strings[this.paginate_index+3];
+      this.sub_results_strings[4] = this.results_strings[this.paginate_index+4];      
+  }
+
+  /** Hop backwards five results and generate them */
+  paginatedown()
+  {
+      this.paginate_index-=5;
+      this.sub_results_strings[0] = this.results_strings[this.paginate_index];
+      this.sub_results_strings[1] = this.results_strings[this.paginate_index+1];
+      this.sub_results_strings[2] = this.results_strings[this.paginate_index+2];
+      this.sub_results_strings[3] = this.results_strings[this.paginate_index+3];
+      this.sub_results_strings[4] = this.results_strings[this.paginate_index+4];
   }
 
 
-
+  /** Filters results based on this.type */
   filterType(unfilteredResults: string[]): string[] {
-    if(this.type === undefined || this.type === 'all') {
+
+    if(this.filetype === undefined || this.filetype === 'all') 
+    {
       return unfilteredResults;
     }
 
-    return unfilteredResults.filter(result => {
-      return result.includes(this.type);
-    })
+    return unfilteredResults.filter(result => {return result.includes(this.filetype);})
   }
 
 
-  
-
- 
 
 
+
+
+  //** Gets the type of the file based on if it contains a certain string -- called from HTML file*/
   getFileType(fileName: string): string {
+
     if(fileName.includes('html')) {
       return 'html';
-    } else if(fileName.includes('pdf')) {
+    } 
+    else if(fileName.includes('pdf')) {
       return 'pdf';
-    } else if (fileName.includes('xml'))
+    } 
+    else if (fileName.includes('xml'))
     {
       return 'xml';
-    } else if (fileName.includes ('doc'))
+    } 
+    else if (fileName.includes ('doc'))
     {
       return 'doc';
     }
-
+     else if (fileName.includes ('xls'))
+    {
+      return 'xls';
+    }
+     else if (fileName.includes ('ppt'))
+    {
+      return 'ppt';
+    }
+        else if (fileName.includes ('php'))
+    {
+      return 'php';
+    }
     else {
       return '';
     }
+
   }
 }
