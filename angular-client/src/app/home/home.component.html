@@ -66,13 +66,13 @@
     <button class ="look"  (click)="paginatedown()" md-raised-button><i class="material-icons">&#xE316;</i></button> 
         <md-list-item *ngFor="let result of sub_results_strings"> 
           <md-chip-list>
-            <md-chip *ngIf="getFileType(result) === 'html'" color="primary" selected="true">HTML</md-chip>
-            <md-chip *ngIf="getFileType(result) === 'pdf'" color="accent" selected="true">PDF</md-chip>
-            <md-chip *ngIf="getFileType(result) === 'doc'" color="warn" selected="true">DOC</md-chip>
-            <md-chip *ngIf="getFileType(result) === 'xml'" color="primary" selected="true">XML</md-chip>
-            <md-chip *ngIf="getFileType(result) === 'xls'" color="accent" selected="true">XLS</md-chip>
-            <md-chip *ngIf="getFileType(result) === 'ppt'" color="primary" selected="true">PPT</md-chip>
-              <md-chip *ngIf="getFileType(result) === 'php'" color="primary" selected="true">PHP</md-chip>
+            <md-chip *ngIf="getFileType(result) === '.html'" color="primary" selected="true">HTML</md-chip>
+            <md-chip *ngIf="getFileType(result) === '.pdf'" color="accent" selected="true">PDF</md-chip>
+            <md-chip *ngIf="getFileType(result) === '.doc'" color="warn" selected="true">DOC</md-chip>
+            <md-chip *ngIf="getFileType(result) === '.xml'" color="primary" selected="true">XML</md-chip>
+            <md-chip *ngIf="getFileType(result) === '.xls'" color="accent" selected="true">XLS</md-chip>
+            <md-chip *ngIf="getFileType(result) === '.ppt'" color="primary" selected="true">PPT</md-chip>
+              <md-chip *ngIf="getFileType(result) === '.php'" color="primary" selected="true">PHP</md-chip>
             <md-chip *ngIf="getFileType(result) === ''" color="warn" selected="true">n/a</md-chip>
         </md-chip-list>
                 <span *ngIf="!sub_results_strings">No Results</span>

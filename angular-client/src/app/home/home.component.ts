@@ -17,7 +17,7 @@ export class HomeComponent
     temp: string = "";
     paginate_index = 0;
     term: string = "";
-    filetype: string;
+    type: string;
     subres_length = 0;
     overpage = false;
 
@@ -33,14 +33,14 @@ export class HomeComponent
 
     types = [
       {'value': 'all', 'name': 'ALL'},
-      {'value': 'pdf', 'name': 'PDF'},
-      {'value': 'html', 'name': 'HTML'},
-      {'value': 'xml', 'name': 'XML'},
-      {'value': 'doc', 'name': 'DOC'},
-      {'value': 'xls', 'name': 'XLS'},
-      {'value': 'php', 'name': 'PHP'},
+      {'value': '.pdf', 'name': 'PDF'},
+      {'value': '.html', 'name': 'HTML'},
+      {'value': '.xml', 'name': 'XML'},
+      {'value': '.doc', 'name': 'DOC'},
+      {'value': '.xls', 'name': 'XLS'},
+      {'value': '.php', 'name': 'PHP'},
 
-      {'value': 'ppt', 'name': 'PPT'},
+      {'value': '.ppt', 'name': 'PPT'},
 ];
   
 
@@ -60,13 +60,15 @@ export class HomeComponent
   /** Gets the backend data based on term provided in this.term */
   search()
   {
-        this.reveal();
         this.subres_length = 0;
         this.paginate_index = 0;
+        this.sub_results_strings = [];
+        this.results_strings = [];
         this.searchService.search(this.term).subscribe(data => {
           this.result = JSON.stringify(data); 
           this.prepareResults(); 
         });
+
        
   }
  
@@ -107,10 +109,9 @@ export class HomeComponent
       }
       else
       {
-           this.generateSubresults();
-
+        this.generateSubresults();
       }
-    
+      this.reveal();
 
 
   }
@@ -195,12 +196,12 @@ export class HomeComponent
   /** Filters results based on this.type */
   filterType(unfilteredResults: string[]): string[] {
 
-    if(this.filetype === undefined || this.filetype === 'all') 
+    if(this.type === undefined || this.type === 'all') 
     {
       return unfilteredResults;
     }
 
-    return unfilteredResults.filter(result => {return result.includes(this.filetype);})
+    return unfilteredResults.filter(result => {return result.includes(this.type);})
   }
 
 
@@ -212,30 +213,30 @@ export class HomeComponent
   getFileType(fileName: string): string {
 
     if(fileName.includes('html')) {
-      return 'html';
+      return '.html';
     } 
-    else if(fileName.includes('pdf')) {
-      return 'pdf';
+    else if(fileName.includes('.pdf')) {
+      return '.pdf';
     } 
-    else if (fileName.includes('xml'))
+    else if (fileName.includes('.xml'))
     {
-      return 'xml';
+      return '.xml';
     } 
-    else if (fileName.includes ('doc'))
+    else if (fileName.includes ('.doc'))
     {
-      return 'doc';
+      return '.doc';
     }
-     else if (fileName.includes ('xls'))
+     else if (fileName.includes ('.xls'))
     {
-      return 'xls';
+      return '.xls';
     }
-     else if (fileName.includes ('ppt'))
+     else if (fileName.includes ('.ppt'))
     {
-      return 'ppt';
+      return '.ppt';
     }
-        else if (fileName.includes ('php'))
+        else if (fileName.includes ('.php'))
     {
-      return 'php';
+      return '.php';
     }
     else {
       return '';
