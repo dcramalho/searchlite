@@ -18,6 +18,8 @@ export class HomeComponent
     paginate_index = 0;
     term: string = "";
     filetype: string;
+    subres_length = 0;
+    overpage = false;
 
     /** String holding the initial undeited result string from the backend */
     result: string = "";
@@ -59,6 +61,8 @@ export class HomeComponent
   search()
   {
         this.reveal();
+        this.subres_length = 0;
+        this.paginate_index = 0;
         this.searchService.search(this.term).subscribe(data => {
           this.result = JSON.stringify(data); 
           this.prepareResults(); 
@@ -87,10 +91,28 @@ export class HomeComponent
       /** Split strings into array based on the whitespace */
       this.results_strings = this.result.split(" "); 
 
-     this.results_strings = this.filterType(this.results_strings);
+      /**Testing for filtering and subresults display*/
+      this.results_strings = this.filterType(this.results_strings);
+      
+
+      this.subres_length = this.results_strings.length;
 
 
-      this.generateSubresults();  
+     
+      if (this.subres_length == 1)
+      {
+        this.sub_results_strings=[];
+        this.sub_results_strings[0] = "NO RESULTS";
+
+      }
+      else
+      {
+           this.generateSubresults();
+
+      }
+    
+
+
   }
 
   /** Generates the subresults to be displayed based on the paginate index. paginate_index +=5 for more and -=5 for less */
@@ -106,23 +128,67 @@ export class HomeComponent
   /** Hop forward five results and generate them */
   paginateup()
   {
-    this.paginate_index+=5;
-      this.sub_results_strings[0] = this.results_strings[this.paginate_index];
-      this.sub_results_strings[1] = this.results_strings[this.paginate_index+1];
-      this.sub_results_strings[2] = this.results_strings[this.paginate_index+2];
-      this.sub_results_strings[3] = this.results_strings[this.paginate_index+3];
-      this.sub_results_strings[4] = this.results_strings[this.paginate_index+4];      
+
+      /**Case of No Results*/
+      if (this.subres_length == 1)
+      {
+
+      }
+      /**Case of results over*/
+      else if ( this.paginate_index + 9 >= this.subres_length )
+      {
+        this.sub_results_strings =[];
+        this.sub_results_strings[0] = this.results_strings[this.paginate_index];
+        this.sub_results_strings[1] = this.results_strings[this.paginate_index+1];
+        this.sub_results_strings[2] = this.results_strings[this.paginate_index+2];
+        this.sub_results_strings[3] = this.results_strings[this.paginate_index+3];
+        this.sub_results_strings[4] = this.results_strings[this.paginate_index+4];
+        this.sub_results_strings[5] = this.results_strings[this.paginate_index+5];
+        this.sub_results_strings[6] = this.results_strings[this.paginate_index+6];                this.sub_results_strings[7] = this.results_strings[this.paginate_index+7];
+        this.sub_results_strings[8] = this.results_strings[this.paginate_index+8];             this.sub_results_strings[9] = this.results_strings[this.paginate_index+9];
+        this.overpage = true;
+      }
+   
+      else
+      {
+        this.paginate_index+=5;
+        this.sub_results_strings = [];
+        this.sub_results_strings[0] = this.results_strings[this.paginate_index];
+        this.sub_results_strings[1] = this.results_strings[this.paginate_index+1];
+        this.sub_results_strings[2] = this.results_strings[this.paginate_index+2];
+        this.sub_results_strings[3] = this.results_strings[this.paginate_index+3];
+        this.sub_results_strings[4] = this.results_strings[this.paginate_index+4];  
+      }    
   }
 
   /** Hop backwards five results and generate them */
   paginatedown()
   {
-      this.paginate_index-=5;
-      this.sub_results_strings[0] = this.results_strings[this.paginate_index];
-      this.sub_results_strings[1] = this.results_strings[this.paginate_index+1];
-      this.sub_results_strings[2] = this.results_strings[this.paginate_index+2];
-      this.sub_results_strings[3] = this.results_strings[this.paginate_index+3];
-      this.sub_results_strings[4] = this.results_strings[this.paginate_index+4];
+      if (this.paginate_index - 4 < 0)
+      {
+        /**ADD CODE TO POP ERROR MESSAGE*/
+        this.paginate_index = 0;
+      }
+      else if (this.overpage == true)
+      {
+          this.sub_results_strings = [];
+          this.sub_results_strings[0] = this.results_strings[this.paginate_index];
+          this.sub_results_strings[1] = this.results_strings[this.paginate_index+1];
+          this.sub_results_strings[2] = this.results_strings[this.paginate_index+2];
+          this.sub_results_strings[3] = this.results_strings[this.paginate_index+3];
+          this.sub_results_strings[4] = this.results_strings[this.paginate_index+4];
+          this.overpage = false;
+      }
+      else
+      {
+        this.paginate_index-=5;
+        this.sub_results_strings = [];
+        this.sub_results_strings[0] = this.results_strings[this.paginate_index];
+        this.sub_results_strings[1] = this.results_strings[this.paginate_index+1];
+        this.sub_results_strings[2] = this.results_strings[this.paginate_index+2];
+        this.sub_results_strings[3] = this.results_strings[this.paginate_index+3];
+        this.sub_results_strings[4] = this.results_strings[this.paginate_index+4];
+      }
   }
 
 

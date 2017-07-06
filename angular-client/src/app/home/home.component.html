@@ -64,7 +64,6 @@
 
     <md-list>
     <button class ="look"  (click)="paginatedown()" md-raised-button><i class="material-icons">&#xE316;</i></button> 
-        <span *ngIf="!sub_results_strings">No Results</span>
         <md-list-item *ngFor="let result of sub_results_strings"> 
           <md-chip-list>
             <md-chip *ngIf="getFileType(result) === 'html'" color="primary" selected="true">HTML</md-chip>
@@ -76,6 +75,8 @@
               <md-chip *ngIf="getFileType(result) === 'php'" color="primary" selected="true">PHP</md-chip>
             <md-chip *ngIf="getFileType(result) === ''" color="warn" selected="true">n/a</md-chip>
         </md-chip-list>
+                <span *ngIf="!sub_results_strings">No Results</span>
+
         {{result}} 
 
     </md-list-item>
