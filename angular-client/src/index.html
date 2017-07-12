@@ -1,18 +1,81 @@
 <!doctype html>
 <html lang="en">
 <head>
-
-
-
-
   <meta charset="utf-8">
-  <title>REDL</title>
-  <base href="/"> <!-- Essential for Routing -->
+  <title>AngularClient</title>
+  <base href="/">
+
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <link rel="icon" type="image/x-icon" href="./favicon.png">
-  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  <link rel="icon" type="image/x-icon" href="favicon.ico">
 </head>
-<body>
-<app-root></app-root>
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+</head>
+<script src="https://www.gstatic.com/firebasejs/4.1.3/firebase.js"></script>
+<script>
+  	// Initialize Firebase
+  	var config = {
+    	apiKey: "AIzaSyDfNFB6Na13zUOdV_LXsqBJSlE4QiHREDA",
+    	authDomain: "redl-auth.firebaseapp.com",
+   	 	databaseURL: "https://redl-auth.firebaseio.com",
+    	projectId: "redl-auth",
+    	storageBucket: "redl-auth.appspot.com",
+    	messagingSenderId: "437680233089"
+  	};
+  	firebase.initializeApp(config);
+  </script>
+  <body>
+    <div id="firebaseui-auth-container"></div>
+    <input id = "txtEmail" type ="email" placeholder="Email">
+    <input id = "txtPassword" type = "password" placeholder="Password">
+    <button id ="btnLogin" class="btn btn-action"> Login </button>
+
+    <button id = "btnSignup" class="btn btn-secondary"> Sign Up </button>
+    <button id = "btnLogout" class="btn btn-action"> Logout </button>
+  </div>
+  <script type="text/javascript">
+    const txtEmail = document.getElementById('txtEmail');
+    const txtPassword = document.getElementById('txtPassword');
+    const btnLogin = document.getElementById('btnLogin');
+    const btnSignup= document.getElementById('btnSignup');
+
+    if(btnLogin != null){
+      btnLogin.addEventListener('click', e => {
+
+      const email = txtEmail.value;
+      const pass = txtPassword.value;
+      const auth = firebase.auth();
+
+      const promise = auth.signInWithEmailAndPassword(email, pass);
+      promise.catch(e => console.log(e.message));
+      })};
+
+    if(btnSignup != null){
+      btnSignup.addEventListener('click', e => {
+      const email = txtEmail.value;
+      const pass = txtPassword.value;
+      const auth = firebase.auth();
+
+      auth.createUserWithEmailAndPassword(email, pass).catch(e => console.log(e.message));
+    })};
+
+    if(btnLogout != null) {
+      btnLogout.addEventListener('click', e => {
+        const auth = firebase.auth();
+
+        const promise = auth.signOut();
+        promise.catch(e => console.log('log out'));1
+      })
+    };
+
+    firebase.auth().onAuthStateChanged(firebaseUser => {
+      if(firebaseUser){
+        window.location.assign('http://frontend.howard.test:4200/featureone');
+      } else {
+        console.log('not logged in');
+      }
+    });
+  </script>
+  <app-root></app-root>
 </body>
 </html>
+
