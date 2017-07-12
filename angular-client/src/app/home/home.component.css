@@ -17,6 +17,7 @@ h3{
 
 md-input-container{
 	background-color: white;
+
 	width: 100%;
 	border: 1.5px solid #000000;
 	padding-bottom: 7px;
@@ -53,6 +54,9 @@ span{
 
 md-card{
 	width: 70%;
+background-size: 412px;
+	color: #000000;
+	background-color: #00000000;
 
 }
 

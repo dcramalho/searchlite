@@ -20,6 +20,7 @@ export class HomeComponent
     type: string;
     subres_length = 0;
     overpage = false;
+    dynamicbutt= 0;
 
     /** String holding the initial undeited result string from the backend */
     result: string = "";
@@ -29,7 +30,6 @@ export class HomeComponent
 
     /** Makes a smaller subarray of the results_strings to allow pagination */
     sub_results_strings: Array<string> = new Array<string>();
-
 
     types = [
       {'value': 'all', 'name': 'ALL'},
@@ -64,7 +64,7 @@ export class HomeComponent
         this.paginate_index = 0;
         this.sub_results_strings = [];
         this.results_strings = [];
-        this.searchService.search(this.term).subscribe(data => {
+        this.searchService.search(this.term.toLowerCase()).subscribe(data => {
           this.result = JSON.stringify(data); 
           this.prepareResults(); 
         });
@@ -84,18 +84,18 @@ export class HomeComponent
       /** Remove last quotation from results string */
       this.result = this.result.substring(0, this.result.lastIndexOf('\"'));
 
-      /** Replace all instances of "," with empty spaces. */
-      this.result = this.result.replace(/\",\"/g, " ");    
+      /** Replace all instances of ","?/ with empty spaces. */
+      this.result = this.result.replace(/\",\".\//g, " ");    
+      
+      /** Replace any pesky remaining ?/ that may have evaded the first replace */
+      this.result = this.result.replace(/.\//g, " "); 
 
-      /** Remove ?/ from strings**/
-      /**this.result = */
+      /** Remove any remaining whitespace on ends of string */
+      this.result = this.result.trim();
 
       /** Split strings into array based on the whitespace */
       this.results_strings = this.result.split(" "); 
 
-      /**Testing for filtering and subresults display*/
-      this.results_strings = this.filterType(this.results_strings);
-      
 
       this.subres_length = this.results_strings.length;
 
@@ -104,7 +104,12 @@ export class HomeComponent
       if (this.subres_length == 1)
       {
         this.sub_results_strings=[];
-        this.sub_results_strings[0] = "NO RESULTS";
+        this.sub_results_strings[0] = "";
+        this.sub_results_strings[1] = "";
+        this.sub_results_strings[2] = "";
+        this.sub_results_strings[3] = "";
+        this.sub_results_strings[4] = "";
+        this.reveal();
 
       }
       else
@@ -115,6 +120,7 @@ export class HomeComponent
 
 
   }
+    
 
   /** Generates the subresults to be displayed based on the paginate index. paginate_index +=5 for more and -=5 for less */
   generateSubresults()
@@ -130,23 +136,49 @@ export class HomeComponent
   paginateup()
   {
 
-      /**Case of No Results*/
-      if (this.subres_length == 1)
-      {
-
-      }
+     
       /**Case of results over*/
-      else if ( this.paginate_index + 9 >= this.subres_length )
+      if ( this.paginate_index + 10 >= this.subres_length )
       {
-        this.sub_results_strings =[];
-        this.sub_results_strings[0] = this.results_strings[this.paginate_index];
-        this.sub_results_strings[1] = this.results_strings[this.paginate_index+1];
-        this.sub_results_strings[2] = this.results_strings[this.paginate_index+2];
-        this.sub_results_strings[3] = this.results_strings[this.paginate_index+3];
-        this.sub_results_strings[4] = this.results_strings[this.paginate_index+4];
-        this.sub_results_strings[5] = this.results_strings[this.paginate_index+5];
-        this.sub_results_strings[6] = this.results_strings[this.paginate_index+6];                this.sub_results_strings[7] = this.results_strings[this.paginate_index+7];
-        this.sub_results_strings[8] = this.results_strings[this.paginate_index+8];             this.sub_results_strings[9] = this.results_strings[this.paginate_index+9];
+        if ( this.paginate_index + 6 >= this.subres_length )
+        {
+          this.sub_results_strings=[];
+           this.sub_results_strings[0] = this.results_strings[this.paginate_index+5];
+          this.sub_results_strings[1] = "";
+          this.sub_results_strings[2] = "";
+          this.sub_results_strings[3] = "";
+          this.sub_results_strings[4] = "";
+
+
+        }
+        else if (this.paginate_index + 7 >= this.subres_length)
+        {
+            this.sub_results_strings=[];
+           this.sub_results_strings[0] = this.results_strings[this.paginate_index+5];
+           this.sub_results_strings[1] = this.results_strings[this.paginate_index+6];
+          this.sub_results_strings[2] = "";
+          this.sub_results_strings[3] = "";
+          this.sub_results_strings[4] = "";
+        }
+        else if (this.paginate_index + 8 >= this.subres_length)
+        {
+            this.sub_results_strings=[];
+           this.sub_results_strings[0] = this.results_strings[this.paginate_index+5];
+           this.sub_results_strings[1] = this.results_strings[this.paginate_index+6];
+           this.sub_results_strings[1] = this.results_strings[this.paginate_index+7];
+           this.sub_results_strings[3] = "";
+          this.sub_results_strings[4] = "";
+        }
+         else if (this.paginate_index + 9 >= this.subres_length)
+        {
+            this.sub_results_strings=[];
+           this.sub_results_strings[0] = this.results_strings[this.paginate_index+5];
+           this.sub_results_strings[1] = this.results_strings[this.paginate_index+6];
+           this.sub_results_strings[2] = this.results_strings[this.paginate_index+7];
+           this.sub_results_strings[3] = this.results_strings[this.paginate_index+8];
+          this.sub_results_strings[4] = "";
+        }
+
         this.overpage = true;
       }
    
@@ -170,15 +202,16 @@ export class HomeComponent
         /**ADD CODE TO POP ERROR MESSAGE*/
         this.paginate_index = 0;
       }
+      /*Case of Having an Incomplete Page--Resets page*/
       else if (this.overpage == true)
       {
-          this.sub_results_strings = [];
-          this.sub_results_strings[0] = this.results_strings[this.paginate_index];
-          this.sub_results_strings[1] = this.results_strings[this.paginate_index+1];
-          this.sub_results_strings[2] = this.results_strings[this.paginate_index+2];
-          this.sub_results_strings[3] = this.results_strings[this.paginate_index+3];
-          this.sub_results_strings[4] = this.results_strings[this.paginate_index+4];
-          this.overpage = false;
+        this.sub_results_strings = [];
+        this.sub_results_strings[0] = this.results_strings[this.paginate_index];
+        this.sub_results_strings[1] = this.results_strings[this.paginate_index+1];
+        this.sub_results_strings[2] = this.results_strings[this.paginate_index+2];
+        this.sub_results_strings[3] = this.results_strings[this.paginate_index+3];
+        this.sub_results_strings[4] = this.results_strings[this.paginate_index+4];
+        this.overpage = false;
       }
       else
       {
@@ -242,5 +275,66 @@ export class HomeComponent
       return '';
     }
 
+  }
+
+
+  getlink(counter)
+  {
+   if (counter == 0)
+   {
+     this.getlink0();
+   }
+   else if (counter == 1)
+   {
+     this.getlink1();
+   }
+   else if (counter == 2)
+   {
+     this.getlink2();
+   }
+   else if (counter == 3)
+   {
+     this.getlink3();
+   }
+   else if(counter == 4)
+   {
+     this.getlink4();
+   }
+  }
+
+  getlink0()
+  {
+    var modified = this.sub_results_strings[0].replace(/_/g, "/");
+    var url = "HTTP://" + modified;
+    var popup = window.open(url, "");
+
+  }
+  getlink1()
+  {
+   
+    var modified = this.sub_results_strings[1].replace(/_/g, "/");
+    var url = "HTTP://" + modified;
+    var popup = window.open(url, "");
+  }
+  getlink2()
+  {
+   
+    var modified = this.sub_results_strings[2].replace(/_/g, "/");
+    var url = "HTTP://" + modified;
+    var popup = window.open(url, "");
+  }
+  getlink3()
+  {
+   
+    var modified = this.sub_results_strings[3].replace(/_/g, "/");
+    var url = "HTTP://" + modified;
+    var popup = window.open(url, "");
+  }
+  getlink4()
+  {
+   
+    var modified = this.sub_results_strings[4].replace(/_/g, "/");
+    var url = "HTTP://" + modified;
+    var popup = window.open(url, "");
   }
 }

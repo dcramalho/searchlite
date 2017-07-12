@@ -4,6 +4,11 @@ import { NgModule } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 
 
+import { AngularFireModule } from 'angularfire2';
+
+// New imports to update based on AngularFire2 version 4
+import { AngularFireDatabaseModule } from 'angularfire2/database';
+import { AngularFireAuthModule } from 'angularfire2/auth';
 
 
 import { MdButtonModule, MdSelectModule, MdInputModule, MdCardModule, MdToolbarModule, MdIconModule, MdListModule, MdChipsModule } from '@angular/material';
@@ -31,6 +36,15 @@ import {MdProgressSpinnerModule} from '@angular/material';
 import {MdProgressBarModule} from '@angular/material';
 import {MdRadioModule} from '@angular/material';
 
+export const firebaseConfig = {
+      apiKey: "AIzaSyC_prsCo9-6x8CXsUrjo8HGGNbH4LBZ0mI",
+    authDomain: "redl-ea2e1.firebaseapp.com",
+    databaseURL: "https://redl-ea2e1.firebaseio.com",
+    projectId: "redl-ea2e1",
+    storageBucket: "redl-ea2e1.appspot.com",
+    messagingSenderId: "610773223584"
+};
+
 @NgModule({
   declarations: [
     AppComponent,
@@ -43,11 +57,15 @@ import {MdRadioModule} from '@angular/material';
     BrowserAnimationsModule,
     FormsModule,
     
-
+    
     MdInputModule,
 
 
     HttpModule,
+    AngularFireModule.initializeApp(firebaseConfig),
+    AngularFireDatabaseModule,
+    AngularFireAuthModule,
+
     MdButtonModule,
     MdCardModule,
     MdToolbarModule,
@@ -75,10 +93,7 @@ import {MdRadioModule} from '@angular/material';
         path:'',
         component: HomeComponent
       },
-      {
-        path: '**',
-        redirectTo: ''
-      }
+      
     ])
   ],
   providers: [SearchService],
